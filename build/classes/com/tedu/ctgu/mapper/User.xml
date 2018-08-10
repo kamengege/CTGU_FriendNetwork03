@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tedu.ctgu.dao.UserDao">
+	<!-- 根据id查询用户信息 嵌套映射-->
+	<select id="findById" parameterType="int" 
+	resultMap="myUser2">
+		select * from friend_user where id=#{id}
+	</select>
+	<!-- 嵌套结果 -->
+	<select id="findById2" parameterType="int" 
+	resultMap="myUser3">
+	  select u.*,p.*  from friend_user u join friend_pic p
+	  on u.id=p.userId where u.id=#{id};
+	</select>
+	
+	<!-- 嵌套查询之查询pic -->
+	<select id="findPic" parameterType="int" 
+	resultType="com.tedu.ctgu.pojo.Pic">
+		select * from friend_pic where userId=#{userId}
+	</select>
+	<select id="login" resultType="com.tedu.ctgu.pojo.User">
+		select * from friend_user where 
+		username=#{0} and password=#{1}
+	</select>
+    <resultMap type="com.tedu.ctgu.pojo.User" 
+    	id="myUser2">
+    	<id property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="name" column="name"/>
+		<result property="password" column="password"/>
+		<result property="age" column="age"/>
+		<result property="gendar" column="gendar"/>
+		<result property="phone" column="phone"/>
+    	<!-- 一对多集合映射 -->
+    	<collection property="picList" column="id" 
+    	ofType="com.tedu.ctgu.pojo.Pic" select="findPic">
+    	</collection>
+    </resultMap>
+    
+    <resultMap type="com.tedu.ctgu.pojo.User" 
+    	id="myUser3">
+    	<id property="id" column="id"/>
+		<result property="username" column="username"/>
+		<result property="name" column="name"/>
+		<result property="password" column="password"/>
+		<result property="age" column="age"/>
+		
+		<result property="gendar" column="gendar"/>
+		<result property="phone" column="phone"/>
+    	<!-- 一对多集合映射 -->
+    	<collection property="picList" column="id" 
+    	ofType="com.tedu.ctgu.pojo.Pic">
+    		<id property="id" column="id"/>
+    		<result property="picName" column="picName"/>
+    		<result property="userId" column="userId"/>
+    	</collection>
+    </resultMap>
+    
+    
+</mapper>
